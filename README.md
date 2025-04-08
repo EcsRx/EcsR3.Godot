@@ -1,2 +1,2 @@
-# EcsR3.Godot
-Integrating EcsR3 with Godot
+# EcsR3 Godot
+EcsR3 but for Godot
