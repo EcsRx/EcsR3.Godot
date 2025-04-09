@@ -3,6 +3,7 @@ using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Godot.Examples.Asteroids.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Services;
+using EcsR3.Godot.Plugins.EcsR3.Godot.Extensions;
 using EcsR3.Groups;
 using EcsR3.Plugins.Transforms.Components;
 using EcsR3.Plugins.Views.Components;
@@ -34,6 +35,8 @@ public class SetupProjectileSystem : ISetupSystem
         colliderComponent.Width = sprite.Texture.GetWidth();
         colliderComponent.Height = sprite.Texture.GetHeight();
         
+        var transformComponent = entity.GetComponent<Transform2DComponent>();
+        viewComponent.SetTransform(transformComponent.Transform);
         this.AddToRootScene(sprite);
     }
 }

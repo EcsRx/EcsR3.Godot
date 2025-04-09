@@ -30,7 +30,8 @@ public class LifetimeClearingSystem : IBasicEntitySystem
         if (lifetimeComponent.AliveTime >= lifetimeComponent.MaxAliveTime)
         {
             UpdateScheduler.OnPostUpdate.Take(1).Subscribe(_ => {
-                EntityCollection.RemoveEntity(entity.Id);
+                if(EntityCollection.ContainsEntity(entity.Id))
+                { EntityCollection.RemoveEntity(entity.Id); }
             });
         }
     }

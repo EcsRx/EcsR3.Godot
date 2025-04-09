@@ -3,6 +3,7 @@ using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Godot.Examples.Asteroids.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Services;
+using EcsR3.Godot.Plugins.EcsR3.Godot.Extensions;
 using EcsR3.Groups;
 using EcsR3.Plugins.Transforms.Components;
 using EcsR3.Plugins.Views.Components;
@@ -25,8 +26,6 @@ public class SetupShipSystem : ISetupSystem
 
     public void Setup(IEntity entity)
     {
-        GD.Print("FOUND ENTITY");
-        
         var viewComponent = entity.GetComponent<ViewComponent>();
         
         var sprite = new Sprite2D();
@@ -42,6 +41,7 @@ public class SetupShipSystem : ISetupSystem
         transformComponent.Transform.Scale = new Vector2(1, 1);
         transformComponent.Transform.Rotation = 0;
         
+        viewComponent.SetTransform(transformComponent.Transform);
         this.AddToRootScene(sprite);
     }
 }

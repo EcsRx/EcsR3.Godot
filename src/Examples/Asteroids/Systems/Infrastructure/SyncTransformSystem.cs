@@ -20,6 +20,8 @@ public class SyncTransformSystem : IBasicEntitySystem
     {
         var viewComponent = entity.GetComponent<ViewComponent>();
         var transformComponent = entity.GetComponent<Transform2DComponent>();
-        viewComponent.SetTransform(transformComponent.Transform);
+        
+        if(viewComponent.View != null)
+        { viewComponent.SetTransform(transformComponent.Transform); }
     }
 }
