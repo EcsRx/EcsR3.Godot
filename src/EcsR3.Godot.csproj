@@ -28,7 +28,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Examples\Asteroids\Resources\GameFont.spritefont" />
     <Content Include="Examples\Asteroids\Resources\laser.png" />
     <Content Include="Examples\Asteroids\Resources\meteor.png" />
     <Content Include="Examples\Asteroids\Resources\ship.png" />
