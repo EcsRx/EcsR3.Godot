@@ -1,8 +1,10 @@
 [gd_scene load_steps=2 format=3 uid="uid://cr88cj0k6ctnq"]
 
-[ext_resource type="Script" uid="uid://dsy48qmgab285" path="res://Examples/Asteroids/ShipApplication.cs" id="2_bvrdq"]
+[ext_resource type="Script" uid="uid://duk3vbgyf1iia" path="res://Examples/Asteroids/AsteroidsApplication.cs" id="1_1pxt7"]
 
 [node name="Scene" type="Node2D"]
 
 [node name="ShipApplication" type="Node2D" parent="."]
-script = ExtResource("2_bvrdq")
+script = ExtResource("1_1pxt7")
+
+[node name="MainCamera" type="Camera2D" parent="."]

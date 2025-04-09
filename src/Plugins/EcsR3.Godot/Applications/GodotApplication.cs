@@ -82,7 +82,7 @@ namespace EcsR3.Godot.Plugins.EcsR3.Godot.Applications
 		protected virtual void LoadModules()
 		{
 			DependencyRegistry.LoadModule<FrameworkModule>();
-			DependencyRegistry.LoadModule<EcsRxInfrastructureModule>();
+			DependencyRegistry.LoadModule<EcsR3InfrastructureModule>();
 			DependencyRegistry.LoadModule<EcsR3GodotInfrastructureModule>();
 		}
 		
