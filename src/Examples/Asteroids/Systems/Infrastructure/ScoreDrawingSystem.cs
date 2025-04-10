@@ -10,7 +10,7 @@ using SystemsR3.Scheduling;
 using SystemsR3.Types;
 
 namespace EcsR3.Godot.Examples.Asteroids.Systems.Infrastructure;
-/*
+
 [Priority(PriorityTypes.SuperLow)]
 public class ScoreDrawingSystem : IBasicEntitySystem
 {
@@ -19,7 +19,7 @@ public class ScoreDrawingSystem : IBasicEntitySystem
         
     public ScoreDrawingSystem()
     {
-       // this.RunOnGodotThread(() => ScoreLabel = this.GetRootScene().CurrentScene.FindChild("ScoreValue") as Label);
+       this.RunOnGodotThread(() => ScoreLabel = this.GetRootScene().CurrentScene.FindChild("ScoreValueLabel") as Label);
     }
 
     public void Process(IEntity entity, ElapsedTime elapsedTime)
@@ -29,4 +29,4 @@ public class ScoreDrawingSystem : IBasicEntitySystem
         var playerComponent = entity.GetComponent<PlayerComponent>();
         ScoreLabel.Text = playerComponent.Score.ToString();
     }
-}*/
+}

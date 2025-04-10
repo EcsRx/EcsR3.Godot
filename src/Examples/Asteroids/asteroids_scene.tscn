@@ -8,3 +8,24 @@
 script = ExtResource("1_1pxt7")
 
 [node name="MainCamera" type="Camera2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer"]
+offset_left = -610.0
+offset_top = -358.0
+offset_right = -567.0
+offset_bottom = -335.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Score"
+
+[node name="ScoreValueLabel" type="Label" parent="CanvasLayer"]
+offset_left = -548.0
+offset_top = -358.0
+offset_right = -505.0
+offset_bottom = -335.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "100"
