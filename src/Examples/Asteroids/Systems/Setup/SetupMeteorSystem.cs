@@ -63,14 +63,13 @@ public class SetupMeteorSystem : ISetupSystem
         var spawnPosition = GetRandomSpawnPosition();
         var targetPosition = GetTargetPosition();
         viewTransform.Position = spawnPosition;
-        viewTransform.Rotation = viewTransform.GetLookAt(targetPosition);
+        viewTransform.Rotation = -viewTransform.GetLookAt(targetPosition);
     }
         
     public Vector2 GetRandomSpawnPosition()
     {
         var bufferAmount = 64;
         var nativeSize = DisplayServer.WindowGetSize();
-        
         var spawnAreaWidth = nativeSize.X/2 + bufferAmount;
         var spawnAreaHeight = nativeSize.Y/2 + bufferAmount;
             
@@ -90,7 +89,7 @@ public class SetupMeteorSystem : ISetupSystem
 
     public Vector2 GetTargetPosition()
     {
-        var range = 128;
+        var range = 64;
         var varianceX = Random.Next(-range, range);
         var varianceY = Random.Next(-range, range);
         return new Vector2(varianceX, varianceY);

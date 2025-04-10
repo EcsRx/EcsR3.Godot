@@ -30,7 +30,8 @@ public class ShipHitEventSystem : IReactToEventSystem<MeteorCollidedWithShipEven
         
         UpdateScheduler.OnPostUpdate.Take(1).Subscribe(_ =>
         {
-            EntityCollection.RemoveEntity(eventData.Meteor.Id);
+            if(EntityCollection.ContainsEntity(eventData.Meteor.Id))
+            { EntityCollection.RemoveEntity(eventData.Meteor.Id); }
         });
     }
 }

@@ -19,7 +19,7 @@ public class MeteorSpawningSystem : IReactiveSystem<Unit>
         EntityCollection = entityDatabase.GetCollection();
     }
 
-    public Observable<Unit> ReactTo() => Observable.Interval(TimeSpan.FromSeconds(2.0f));
+    public Observable<Unit> ReactTo() => Observable.Interval(TimeSpan.FromSeconds(0.5f));
 
     public void Execute(Unit _)
     {
