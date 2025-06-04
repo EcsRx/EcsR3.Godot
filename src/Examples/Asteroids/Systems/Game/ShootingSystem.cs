@@ -1,10 +1,11 @@
 using System.Numerics;
-using EcsR3.Collections.Database;
-using EcsR3.Collections.Entity;
+using EcsR3.Collections.Entities;
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Blueprints;
 using EcsR3.Godot.Examples.Asteroids.Components;
+using EcsR3.Godot.Examples.Asteroids.Extensions;
 using EcsR3.Groups;
 using EcsR3.Plugins.Transforms.Components;
 using EcsR3.Systems;
@@ -21,40 +22,40 @@ public class ShootingSystem : IBasicEntitySystem
     
     public IEntityCollection EntityCollection { get; }
 
-    public ShootingSystem(IEntityDatabase entityDatabase)
+    public ShootingSystem(IEntityCollection entityCollection)
     {
-        EntityCollection = entityDatabase.GetCollection();
+        EntityCollection = entityCollection;
     }
 
-    public void Process(IEntity entity, ElapsedTime elapsedTime)
+    public void Process(IEntityComponentAccessor entityComponentAccessor, Entity entity, ElapsedTime elapsedTime)
     {
-        var shootingComponent = entity.GetComponent<ShootingComponent>();
+        var shootingComponent = entityComponentAccessor.GetComponent<ShootingComponent>(entity);
         if (shootingComponent.FireTimeLeft > 0)
         { shootingComponent.FireTimeLeft -= (float)elapsedTime.DeltaTime.TotalSeconds; }
 
         if (shootingComponent.IsFiring && shootingComponent.FireTimeLeft <= 0)
         {
             shootingComponent.FireTimeLeft += FireRateDelay;
-            CreateShotFor(entity);
+            CreateShotFor(entityComponentAccessor, entity);
         }
     }
 
-    public void CreateShotFor(IEntity shooterEntity)
+    public void CreateShotFor(IEntityComponentAccessor entityComponentAccessor, Entity shooterEntity)
     {
-        var shooterTransformComponent = shooterEntity.GetComponent<Transform2DComponent>();
+        var shooterTransformComponent = entityComponentAccessor.GetComponent<Transform2DComponent>(shooterEntity);
         var shooterTransform = shooterTransformComponent.Transform;
 
-        var projectileEntity = EntityCollection.CreateEntity<ProjectileBlueprint>();
-        var projectileTransformComponent = projectileEntity.GetComponent<Transform2DComponent>();
+        var projectileEntity = EntityCollection.Create<ProjectileBlueprint>(entityComponentAccessor);
+        var projectileTransformComponent = entityComponentAccessor.GetComponent<Transform2DComponent>(projectileEntity);
         var projectileTransform = projectileTransformComponent.Transform;
         projectileTransform.Position = shooterTransform.Position;
         projectileTransform.Rotation = shooterTransform.Rotation;
-        projectileTransform.Position += projectileTransform.Forward() * 64.0f;
+        projectileTransform.Position += projectileTransform.GDForward() * 64.0f;
 
-        var projectileComponent = projectileEntity.GetComponent<ProjectileComponent>();
-        projectileComponent.PlayerEntityId = shooterEntity.Id;
+        var projectileComponent = entityComponentAccessor.GetComponent<ProjectileComponent>(projectileEntity);
+        projectileComponent.PlayerEntity = shooterEntity;
         
-        var moveableComponent = projectileEntity.GetComponent<MoveableComponent>();
+        var moveableComponent = entityComponentAccessor.GetComponent<MoveableComponent>(projectileEntity);
         moveableComponent.MovementChange = new Vector2(0, 1); // No Strafe, Just Forwards
     }
 }

@@ -1,4 +1,5 @@
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Godot.Examples.Asteroids.Extensions;
@@ -22,11 +23,11 @@ public class ScoreDrawingSystem : IBasicEntitySystem
        this.RunOnGodotThread(() => ScoreLabel = this.GetRootScene().CurrentScene.FindChild("ScoreValueLabel") as Label);
     }
 
-    public void Process(IEntity entity, ElapsedTime elapsedTime)
+    public void Process(IEntityComponentAccessor entityComponentAccessor, Entity entity, ElapsedTime elapsedTime)
     {
         if(ScoreLabel == null) { return; }
         
-        var playerComponent = entity.GetComponent<PlayerComponent>();
+        var playerComponent = entityComponentAccessor.GetComponent<PlayerComponent>(entity);
         ScoreLabel.Text = playerComponent.Score.ToString();
     }
 }

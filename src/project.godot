@@ -15,6 +15,11 @@ run/main_scene="uid://cr88cj0k6ctnq"
 config/features=PackedStringArray("4.4", "C#")
 config/icon="res://icon.png"
 
+[autoload]
+
+FrameProviderDispatcher="*res://addons/R3.Godot/FrameProviderDispatcher.cs"
+ObservableTrackerRuntimeHook="*res://addons/R3.Godot/ObservableTrackerRuntimeHook.cs"
+
 [display]
 
 window/size/viewport_width=1280
@@ -23,6 +28,10 @@ window/size/viewport_height=768
 [dotnet]
 
 project/assembly_name="EcsR3.Godot"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/R3.Godot/plugin.cfg")
 
 [input]
 

@@ -1,7 +1,9 @@
+using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Blueprints;
 using EcsR3.Godot.Examples.Asteroids.Modules;
 using EcsR3.Godot.Examples.Asteroids.Services;
 using EcsR3.Godot.Plugins.EcsR3.Godot.Applications;
+using R3;
 using SystemsR3.Infrastructure.Extensions;
 
 namespace EcsR3.Godot.Examples.Asteroids;
@@ -30,7 +32,6 @@ public partial class AsteroidsApplication : GodotApplication
 
 	protected override void ApplicationStarted()
 	{
-		var defaultCollection = EntityDatabase.GetCollection();
-		defaultCollection.CreateEntity(new ShipBlueprint());
+		EntityCollection.Create<ShipBlueprint>(EntityComponentAccessor);
 	}
 }

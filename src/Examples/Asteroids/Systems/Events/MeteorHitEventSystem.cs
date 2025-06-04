@@ -1,8 +1,8 @@
 using System;
 using System.Numerics;
-using EcsR3.Collections.Database;
-using EcsR3.Collections.Entity;
+using EcsR3.Collections.Entities;
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Blueprints;
 using EcsR3.Godot.Examples.Asteroids.Components;
@@ -20,56 +20,59 @@ public class MeteorHitEventSystem : IReactToEventSystem<MeteorCollidedWithProjec
 {
     public IEntityCollection EntityCollection { get; }
     public IUpdateScheduler UpdateScheduler { get; }
+    public IEntityComponentAccessor EntityComponentAccessor { get; }
     public Random Random { get; } = new Random();
 
-    public MeteorHitEventSystem(IEntityDatabase entityDatabase, IUpdateScheduler updateScheduler)
+    public MeteorHitEventSystem(IEntityCollection entityCollection, IUpdateScheduler updateScheduler, IEntityComponentAccessor entityComponentAccessor)
     {
         UpdateScheduler = updateScheduler;
-        EntityCollection = entityDatabase.GetCollection();
+        EntityComponentAccessor = entityComponentAccessor;
+        EntityCollection = entityCollection;
     }
+
+    public Observable<MeteorCollidedWithProjectileEvent> ObserveOn(Observable<MeteorCollidedWithProjectileEvent> observable)
+    { return observable; }
 
     public void Process(MeteorCollidedWithProjectileEvent eventData)
     {
-        var meteorComponent = eventData.Meteor.GetComponent<MeteorComponent>();
-
-        var projectileComponent = eventData.Projectile.GetComponent<ProjectileComponent>();
-        var owningShip = EntityCollection.GetEntity(projectileComponent.PlayerEntityId);
-        
-        var playerComponent = owningShip.GetComponent<PlayerComponent>();
+        var meteorComponent = EntityComponentAccessor.GetComponent<MeteorComponent>(eventData.MeteorEntity);
+        var projectileComponent = EntityComponentAccessor.GetComponent<ProjectileComponent>(eventData.ProjectileEntity);
+        var playerComponent = EntityComponentAccessor.GetComponent<PlayerComponent>(projectileComponent.PlayerEntity);
         playerComponent.Score += CalculateScoreFor(meteorComponent);
 
-        SpawnNewMeteorsIfNeeded(eventData.Meteor);
+        SpawnNewMeteorsIfNeeded(eventData.MeteorEntity);
        
         UpdateScheduler.OnPostUpdate.Take(1).Subscribe(_ =>
         {
             // The Lifecycle system may have removed these during the update cycle
             // so we need to confirm they still exist
-            if(EntityCollection.ContainsEntity(eventData.Meteor.Id))
-            { EntityCollection.RemoveEntity(eventData.Meteor.Id); }
+            if(EntityCollection.Contains(eventData.MeteorEntity))
+            { EntityCollection.Remove(eventData.MeteorEntity); }
             
-            if(EntityCollection.ContainsEntity(eventData.Projectile.Id))
-            { EntityCollection.RemoveEntity(eventData.Projectile.Id); }
+            if(EntityCollection.Contains(eventData.ProjectileEntity))
+            { EntityCollection.Remove(eventData.ProjectileEntity); }
         });
     }
 
-    public void SpawnNewMeteorsIfNeeded(IEntity meteorEntity)
+    public void SpawnNewMeteorsIfNeeded(Entity meteorEntity)
     {
-        var meteorComponent = meteorEntity.GetComponent<MeteorComponent>();
+        var meteorComponent = EntityComponentAccessor.GetComponent<MeteorComponent>(meteorEntity);
         if (meteorComponent.Type == MeteorType.Small) { return; }
 
-        var transformComponent = meteorEntity.GetComponent<Transform2DComponent>();
+        var transformComponent = EntityComponentAccessor.GetComponent<Transform2DComponent>(meteorEntity);
         var parentTransform = transformComponent.Transform;
 
-        var newMeteor1 = EntityCollection.CreateEntity(new MeteorBlueprint { MeteorType = meteorComponent.Type + 1 });
+        var meteorBlueprint = new MeteorBlueprint() { MeteorType = meteorComponent.Type + 1 };
+        var newMeteor1 = EntityCollection.Create(EntityComponentAccessor, meteorBlueprint);
         SetupChildTransforms(newMeteor1, parentTransform);
         
-        var newMeteor2 = EntityCollection.CreateEntity(new MeteorBlueprint { MeteorType = meteorComponent.Type + 1 });
+        var newMeteor2 = EntityCollection.Create(EntityComponentAccessor, meteorBlueprint);
         SetupChildTransforms(newMeteor2, parentTransform);
     }
 
-    public void SetupChildTransforms(IEntity childMeteor, Transform2D parentTransform)
+    public void SetupChildTransforms(Entity childMeteor, Transform2D parentTransform)
     {
-        var transformComponent = childMeteor.GetComponent<Transform2DComponent>();
+        var transformComponent = EntityComponentAccessor.GetComponent<Transform2DComponent>(childMeteor);
         var transform = transformComponent.Transform;
 
         var positionOffset = new Vector2(Random.Next(-64, 64));

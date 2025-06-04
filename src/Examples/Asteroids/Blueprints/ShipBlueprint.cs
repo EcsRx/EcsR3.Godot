@@ -1,5 +1,6 @@
 using EcsR3.Blueprints;
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Plugins.Transforms.Components;
@@ -9,7 +10,7 @@ namespace EcsR3.Godot.Examples.Asteroids.Blueprints;
 
 public class ShipBlueprint : IBlueprint
 {
-    public void Apply(IEntity entity)
+    public void Apply(IEntityComponentAccessor entityComponentAccessor, Entity entity)
     {
         var handlingComponent = new HandlingComponent()
         {
@@ -17,7 +18,7 @@ public class ShipBlueprint : IBlueprint
             RotationSpeed = 5.0f
         };
             
-        entity.AddComponents(new PlayerComponent(), handlingComponent, new ColliderComponent(), 
+        entityComponentAccessor.AddComponents(entity, new PlayerComponent(), handlingComponent, new ColliderComponent(), 
             new ShootingComponent(), new MoveableComponent(), new ViewComponent(), new Transform2DComponent());
     }
 }

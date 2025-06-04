@@ -1,6 +1,6 @@
 using System;
-using EcsR3.Collections.Database;
-using EcsR3.Collections.Entity;
+using EcsR3.Collections.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Blueprints;
 using R3;
@@ -11,18 +11,20 @@ namespace EcsR3.Godot.Examples.Asteroids.Systems.Game;
 public class MeteorSpawningSystem : IReactiveSystem<Unit>
 {
     public IEntityCollection EntityCollection { get; }
+    public IEntityComponentAccessor EntityComponentAccessor { get; }
     
     private double _elapsedTime;
 
-    public MeteorSpawningSystem(IEntityDatabase entityDatabase)
+    public MeteorSpawningSystem(IEntityCollection entityCollection, IEntityComponentAccessor entityComponentAccessor)
     {
-        EntityCollection = entityDatabase.GetCollection();
+        EntityCollection = entityCollection;
+        EntityComponentAccessor = entityComponentAccessor;
     }
 
-    public Observable<Unit> ReactTo() => Observable.Interval(TimeSpan.FromSeconds(0.5f));
+    public Observable<Unit> ReactTo() => Observable.Interval(TimeSpan.FromSeconds(0.1f));
 
     public void Execute(Unit _)
     {
-        EntityCollection.CreateEntity<MeteorBlueprint>();
+        EntityCollection.Create<MeteorBlueprint>(EntityComponentAccessor);
     }
 }

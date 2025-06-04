@@ -1,10 +1,11 @@
 using System;
+using EcsR3.Computeds.Entities;
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.HelloWorld.Components;
 using EcsR3.Groups;
-using EcsR3.Groups.Observable;
-using EcsR3.Systems;
+using EcsR3.Systems.Reactive;
 using Godot;
 using R3;
 
@@ -14,12 +15,12 @@ namespace EcsR3.Godot.Examples.HelloWorld.Systems
 	{
 		public IGroup Group { get; } = new Group(typeof(SayHelloComponent));
 		
-		public Observable<IObservableGroup> ReactToGroup(IObservableGroup observableGroup)
-		{ return Observable.Interval(TimeSpan.FromSeconds(1)).Select(x => observableGroup); }
+		public Observable<IComputedEntityGroup> ReactToGroup(IComputedEntityGroup computedEntityGroup)
+		{ return Observable.Interval(TimeSpan.FromSeconds(1)).Select(x => computedEntityGroup); }
 
-		public void Process(IEntity entity)
+		public void Process(IEntityComponentAccessor entityComponentAccessor, Entity entity)
 		{
-			var helloComponent = entity.GetComponent<SayHelloComponent>();
+			var helloComponent = entityComponentAccessor.GetComponent<SayHelloComponent>(entity);
 			GD.Print($"Hello there {helloComponent.Name} @ {DateTime.Now}");
 		}
 	}

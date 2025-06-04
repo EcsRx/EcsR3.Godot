@@ -1,5 +1,6 @@
 using EcsR3.Blueprints;
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Plugins.Transforms.Components;
@@ -9,7 +10,7 @@ namespace EcsR3.Godot.Examples.Asteroids.Blueprints;
 
 public class ProjectileBlueprint : IBlueprint
 {
-    public void Apply(IEntity entity)
+    public void Apply(IEntityComponentAccessor entityComponentAccessor, Entity entity)
     {
         var handlingComponent = new HandlingComponent()
         {
@@ -22,7 +23,7 @@ public class ProjectileBlueprint : IBlueprint
             MaxAliveTime = 5.0f
         };
         
-        entity.AddComponents(handlingComponent, new ProjectileComponent(), lifetimeComponent, 
+        entityComponentAccessor.AddComponents(entity, handlingComponent, new ProjectileComponent(), lifetimeComponent, 
             new MoveableComponent(), new ColliderComponent(), new ViewComponent(), new Transform2DComponent());
     }
 }

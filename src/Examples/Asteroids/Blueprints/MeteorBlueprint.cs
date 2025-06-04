@@ -1,5 +1,6 @@
 using EcsR3.Blueprints;
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Godot.Examples.Asteroids.Types;
@@ -12,7 +13,7 @@ public class MeteorBlueprint : IBlueprint
 {
     public MeteorType MeteorType { get; set; } = MeteorType.Big;
     
-    public void Apply(IEntity entity)
+    public void Apply(IEntityComponentAccessor entityComponentAccessor, Entity entity)
     {
         var handlingComponent = new HandlingComponent()
         {
@@ -30,7 +31,7 @@ public class MeteorBlueprint : IBlueprint
             Type = MeteorType
         };
         
-        entity.AddComponents(handlingComponent, meteorComponent, lifetimeComponent, 
+        entityComponentAccessor.AddComponents(entity, handlingComponent, meteorComponent, lifetimeComponent, 
             new MoveableComponent(), new ColliderComponent(), new ViewComponent(), new Transform2DComponent());
     }
 }

@@ -2,8 +2,14 @@ using EcsR3.Entities;
 
 namespace EcsR3.Godot.Examples.Asteroids.Events;
 
-public class MeteorCollidedWithShipEvent
+public readonly struct MeteorCollidedWithShipEvent
 {
-    public IEntity Meteor { get; set; }
-    public IEntity Ship { get; set; }
+    public readonly Entity MeteorEntity;
+    public readonly Entity ShipEntity;
+
+    public MeteorCollidedWithShipEvent(Entity meteorEntity, Entity shipEntity)
+    {
+        MeteorEntity = meteorEntity;
+        ShipEntity = shipEntity;
+    }
 }

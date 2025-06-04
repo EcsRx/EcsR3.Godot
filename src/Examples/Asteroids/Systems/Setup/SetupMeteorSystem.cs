@@ -1,5 +1,6 @@
 using System;
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Godot.Examples.Asteroids.Extensions;
@@ -9,7 +10,7 @@ using EcsR3.Godot.Plugins.EcsR3.Godot.Extensions;
 using EcsR3.Groups;
 using EcsR3.Plugins.Transforms.Components;
 using EcsR3.Plugins.Views.Components;
-using EcsR3.Systems;
+using EcsR3.Systems.Reactive;
 using Godot;
 using SystemsR3.Plugins.Transforms.Extensions;
 using Vector2 = System.Numerics.Vector2;
@@ -29,33 +30,33 @@ public class SetupMeteorSystem : ISetupSystem
         GameTextureResources = gameTextureResources;
     }
 
-    public void Setup(IEntity entity)
+    public void Setup(IEntityComponentAccessor entityComponentAccessor, Entity entity)
     {
-        var viewComponent = entity.GetComponent<ViewComponent>();
+        var viewComponent = entityComponentAccessor.GetComponent<ViewComponent>(entity);
         
         var sprite = new Sprite2D();
         sprite.Texture = GameTextureResources.MeteorTexture;
         viewComponent.View = sprite;
         
-        var colliderComponent = entity.GetComponent<ColliderComponent>();
+        var colliderComponent = entityComponentAccessor.GetComponent<ColliderComponent>(entity);
         colliderComponent.Width = sprite.Texture.GetWidth();
         colliderComponent.Height = sprite.Texture.GetHeight();
             
-        var moveableComponent = entity.GetComponent<MoveableComponent>();
+        var moveableComponent = entityComponentAccessor.GetComponent<MoveableComponent>(entity);
         moveableComponent.MovementChange = new Vector2(0, 1);
 
-        SetupTransform(entity);
+        SetupTransform(entityComponentAccessor, entity);
         
-        var transformComponent = entity.GetComponent<Transform2DComponent>();
+        var transformComponent = entityComponentAccessor.GetComponent<Transform2DComponent>(entity);
         viewComponent.SetTransform(transformComponent.Transform);
         
         this.AddToRootScene(sprite);
     }
 
-    public void SetupTransform(IEntity entity)
+    public void SetupTransform(IEntityComponentAccessor entityComponentAccessor,  Entity entity)
     {
-        var meteorComponent = entity.GetComponent<MeteorComponent>();
-        var transformComponent = entity.GetComponent<Transform2DComponent>();
+        var meteorComponent = entityComponentAccessor.GetComponent<MeteorComponent>(entity);
+        var transformComponent = entityComponentAccessor.GetComponent<Transform2DComponent>(entity);
         var viewTransform = transformComponent.Transform;
         viewTransform.Scale = Vector2.One / (int)meteorComponent.Type;
         if (meteorComponent.Type != MeteorType.Big) { return; }

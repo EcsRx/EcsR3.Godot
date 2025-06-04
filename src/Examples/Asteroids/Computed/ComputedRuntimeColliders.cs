@@ -1,31 +1,35 @@
+using System;
+using System.Collections.Generic;
 using System.Drawing;
-using EcsR3.Computeds.Collections;
+using EcsR3.Components.Database;
+using EcsR3.Computeds.Components;
+using EcsR3.Computeds.Components.Conventions;
 using EcsR3.Entities;
-using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Godot.Examples.Asteroids.Extensions;
-using EcsR3.Groups.Observable;
 using EcsR3.Plugins.Transforms.Components;
 using R3;
 
 namespace EcsR3.Godot.Examples.Asteroids.Computed;
 
-public class ComputedRuntimeColliders : ComputedCollectionFromGroup<Rectangle>
+public class ComputedRuntimeColliders : ComputedFromComponentGroup<Dictionary<int, Rectangle>, ColliderComponent, Transform2DComponent>
 {
-    public ComputedRuntimeColliders(IObservableGroup internalObservableGroup) : base(internalObservableGroup)
-    {}
-
-    public override Observable<bool> RefreshWhen()
-    { return Observable.Never<bool>(); }
-
-    public override bool ShouldTransform(IEntity entity) => true;
-    
-    public override Rectangle Transform(IEntity entity) => GenerateCollisionArea(entity);
-    
-    public Rectangle GenerateCollisionArea(IEntity entity)
+    public ComputedRuntimeColliders(IComponentDatabase componentDatabase, IComputedComponentGroup<ColliderComponent, Transform2DComponent> dataSource) : base(componentDatabase, dataSource)
     {
-        var colliderComponent = entity.GetComponent<ColliderComponent>();
-        var transformComponent = entity.GetComponent<Transform2DComponent>();
-        return transformComponent.Transform.GetCollisionArea(colliderComponent);
+        ComputedData = new Dictionary<int, Rectangle>();
+    }
+    
+    protected override Observable<Unit> RefreshWhen()
+    { return Observable.Never<Unit>(); }
+
+    protected override void UpdateComputedData(ReadOnlyMemory<(Entity, ColliderComponent, Transform2DComponent)> componentData)
+    {
+        var componentDataSpan = componentData.Span;
+        for (var i = 0; i < componentDataSpan.Length; i++)
+        {
+            var (entity, colliderComponent, transformComponent) = componentDataSpan[i];
+            var collider = transformComponent.Transform.GetCollisionArea(colliderComponent);
+            ComputedData[entity.Id] = collider;
+        }
     }
 }

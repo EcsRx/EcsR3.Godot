@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using EcsR3.Collections;
-using EcsR3.Collections.Database;
+using EcsR3.Collections.Entities;
+using EcsR3.Computeds.Components.Registries;
+using EcsR3.Computeds.Entities.Registries;
+using EcsR3.Entities.Accessors;
 using EcsR3.Godot.Plugins.EcsR3.Godot.Modules;
 using EcsR3.Godot.Plugins.EcsR3.Godot.Polyfills;
 using EcsR3.Infrastructure;
@@ -10,7 +12,6 @@ using EcsR3.Plugins.Transforms;
 using EcsR3.Plugins.Views;
 using Godot;
 using Godot.DependencyInjection;
-using Godot.DependencyInjection.Injection;
 using Microsoft.Extensions.DependencyInjection;
 using SystemsR3.Events;
 using SystemsR3.Executor;
@@ -31,8 +32,10 @@ namespace EcsR3.Godot.Plugins.EcsR3.Godot.Applications
 		
 		public ISystemExecutor SystemExecutor { get; private set; }
 		public IEventSystem EventSystem { get; private set; }
-		public IEntityDatabase EntityDatabase { get; private set; }
-		public IObservableGroupManager ObservableGroupManager { get; private set; }
+		public IEntityCollection EntityCollection { get; private set; }
+		public IComputedEntityGroupRegistry ComputedEntityGroupRegistry { get; private set; }
+		public IComputedComponentGroupRegistry ComputedComponentGroupRegistry { get; private set; }
+		public IEntityComponentAccessor EntityComponentAccessor { get; private set; }
 		
 		public IEnumerable<ISystemsR3Plugin> Plugins => _plugins;
 		
@@ -94,8 +97,10 @@ namespace EcsR3.Godot.Plugins.EcsR3.Godot.Applications
 		{
 			SystemExecutor = DependencyResolver.Resolve<ISystemExecutor>();
 			EventSystem = DependencyResolver.Resolve<IEventSystem>();
-			EntityDatabase = DependencyResolver.Resolve<IEntityDatabase>();
-			ObservableGroupManager = DependencyResolver.Resolve<IObservableGroupManager>();
+			EntityCollection = DependencyResolver.Resolve<IEntityCollection>();
+			ComputedEntityGroupRegistry = DependencyResolver.Resolve<IComputedEntityGroupRegistry>();
+			ComputedComponentGroupRegistry = DependencyResolver.Resolve<IComputedComponentGroupRegistry>();
+			EntityComponentAccessor = DependencyResolver.Resolve<IEntityComponentAccessor>();
 		}
 		
 		/// <summary>

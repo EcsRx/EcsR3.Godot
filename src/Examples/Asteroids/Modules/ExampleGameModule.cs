@@ -1,4 +1,5 @@
-﻿using EcsR3.Godot.Examples.Asteroids.Components;
+﻿using EcsR3.Components.Database;
+using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Godot.Examples.Asteroids.Computed;
 using EcsR3.Godot.Examples.Asteroids.Services;
 using EcsR3.Infrastructure.Extensions;
@@ -16,9 +17,10 @@ public class ExampleGameModule : IDependencyModule
         
         registry.Bind<ComputedRuntimeColliders>(x => x.ToMethod(resolver =>
         {
-            var observableGroup =
-                resolver.ResolveObservableGroup(typeof(ColliderComponent), typeof(Transform2DComponent));
-            return new ComputedRuntimeColliders(observableGroup);
+            var computedDatabase = resolver.Resolve<IComponentDatabase>();
+            var computedComponentGroup =
+                resolver.ResolveComputedComponentGroup<ColliderComponent, Transform2DComponent>();
+            return new ComputedRuntimeColliders(computedDatabase, computedComponentGroup);
         }));
     }
 }

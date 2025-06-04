@@ -8,14 +8,10 @@ namespace EcsR3.Godot.Examples.HelloWorld
 	{
 		protected override void ApplicationStarted()
 		{
-			var collection = EntityDatabase.GetCollection();
-			var entity = collection.CreateEntity();
+			var entity = EntityCollection.Create();
 
-			var helloComponent = new SayHelloComponent
-			{
-				Name = "Bob"
-			};
-			entity.AddComponent(helloComponent);
+			var helloComponent = new SayHelloComponent { Name = "Bob" };
+			EntityComponentAccessor.AddComponent(entity, helloComponent);
 		}
 	}
 }

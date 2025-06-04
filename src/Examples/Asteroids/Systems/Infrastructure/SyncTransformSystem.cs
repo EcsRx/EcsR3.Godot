@@ -1,4 +1,5 @@
 ﻿using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Plugins.EcsR3.Godot.Extensions;
 using EcsR3.Groups;
@@ -16,10 +17,10 @@ public class SyncTransformSystem : IBasicEntitySystem
 {
     public IGroup Group { get; } = new Group(typeof(ViewComponent), typeof(Transform2DComponent));
     
-    public void Process(IEntity entity, ElapsedTime elapsedTime)
+    public void Process(IEntityComponentAccessor entityComponentAccessor, Entity entity, ElapsedTime elapsedTime)
     {
-        var viewComponent = entity.GetComponent<ViewComponent>();
-        var transformComponent = entity.GetComponent<Transform2DComponent>();
+        var viewComponent = entityComponentAccessor.GetComponent<ViewComponent>(entity);
+        var transformComponent = entityComponentAccessor.GetComponent<Transform2DComponent>(entity);
         
         if(viewComponent.View != null)
         { viewComponent.SetTransform(transformComponent.Transform); }

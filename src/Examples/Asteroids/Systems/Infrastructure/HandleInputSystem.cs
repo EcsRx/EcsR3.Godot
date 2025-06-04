@@ -1,4 +1,5 @@
 using EcsR3.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Groups;
@@ -16,18 +17,18 @@ public class HandleInputSystem : IBasicEntitySystem
 {
     public IGroup Group { get; } = new Group(typeof(MoveableComponent), typeof(ShootingComponent), typeof(PlayerComponent));
         
-    public void Process(IEntity entity, ElapsedTime elapsedTime)
+    public void Process(IEntityComponentAccessor entityComponentAccessor, Entity entity, ElapsedTime elapsedTime)
     {
         var forwardChange = Input.GetAxis("backwards", "forwards");
         var strafeChange = Input.GetAxis("strafe_left", "strafe_right");
         var rotationChange = Input.GetAxis("rotate_left", "rotate_right");
         var isFiring = Input.IsActionPressed("fire");
         
-        var moveableComponent = entity.GetComponent<MoveableComponent>();
+        var moveableComponent = entityComponentAccessor.GetComponent<MoveableComponent>(entity);
         moveableComponent.MovementChange = new Vector2(strafeChange, forwardChange);
         moveableComponent.DirectionChange = rotationChange;
 
-        var shootingComponent = entity.GetComponent<ShootingComponent>();
+        var shootingComponent = entityComponentAccessor.GetComponent<ShootingComponent>(entity);
         shootingComponent.IsFiring = isFiring;
     }
 }

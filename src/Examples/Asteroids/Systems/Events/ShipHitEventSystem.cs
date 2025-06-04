@@ -1,5 +1,5 @@
-using EcsR3.Collections.Database;
-using EcsR3.Collections.Entity;
+using EcsR3.Collections.Entities;
+using EcsR3.Entities.Accessors;
 using EcsR3.Extensions;
 using EcsR3.Godot.Examples.Asteroids.Components;
 using EcsR3.Godot.Examples.Asteroids.Events;
@@ -13,16 +13,21 @@ public class ShipHitEventSystem : IReactToEventSystem<MeteorCollidedWithShipEven
 {
     public IEntityCollection EntityCollection { get; }
     public IUpdateScheduler UpdateScheduler { get; }
+    public IEntityComponentAccessor EntityComponentAccessor { get; }
     
-    public ShipHitEventSystem(IEntityDatabase entityDatabase, IUpdateScheduler updateScheduler)
+    public ShipHitEventSystem(IEntityCollection entityCollection, IUpdateScheduler updateScheduler, IEntityComponentAccessor entityComponentAccessor)
     {
         UpdateScheduler = updateScheduler;
-        EntityCollection = entityDatabase.GetCollection();
+        EntityComponentAccessor = entityComponentAccessor;
+        EntityCollection = entityCollection;
     }
+
+    public Observable<MeteorCollidedWithShipEvent> ObserveOn(Observable<MeteorCollidedWithShipEvent> observable)
+    { return observable; }
 
     public void Process(MeteorCollidedWithShipEvent eventData)
     {
-        var playerComponent = eventData.Ship.GetComponent<PlayerComponent>();
+        var playerComponent = EntityComponentAccessor.GetComponent<PlayerComponent>(eventData.ShipEntity);
         playerComponent.Score -= 500;
 
         if (playerComponent.Score < 0)
@@ -30,8 +35,7 @@ public class ShipHitEventSystem : IReactToEventSystem<MeteorCollidedWithShipEven
         
         UpdateScheduler.OnPostUpdate.Take(1).Subscribe(_ =>
         {
-            if(EntityCollection.ContainsEntity(eventData.Meteor.Id))
-            { EntityCollection.RemoveEntity(eventData.Meteor.Id); }
+            EntityCollection.Remove(eventData.MeteorEntity);
         });
     }
 }
