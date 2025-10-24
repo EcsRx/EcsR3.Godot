@@ -58,5 +58,5 @@ public class MeteorCollisionDetectionSystem : IReactToGroupSystem, ISystemPrePro
     }
 
     public void BeforeProcessing()
-    { ComputedRuntimeColliders.RefreshData(); }
+    { ComputedRuntimeColliders.ForceRefresh(); }
 }
